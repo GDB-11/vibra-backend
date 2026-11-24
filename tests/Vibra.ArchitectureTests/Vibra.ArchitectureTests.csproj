@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NetArchTest.Rules" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Vibra.Api/Vibra.Api.csproj" />
+    <ProjectReference Include="../../src/Shared/Vibra.Shared.Api/Vibra.Shared.Api.csproj" />
+    <ProjectReference Include="../../src/Shared/Vibra.Shared.Domain/Vibra.Shared.Domain.csproj" />
+    <ProjectReference Include="../../src/Shared/Vibra.Shared.Infrastructure/Vibra.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/Modules/Billing/Vibra.Modules.Billing/Vibra.Modules.Billing.csproj" />
+    <ProjectReference Include="../../src/Modules/Catalog/Vibra.Modules.Catalog/Vibra.Modules.Catalog.csproj" />
+    <ProjectReference Include="../../src/Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
+    <ProjectReference Include="../../src/Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
+    <ProjectReference Include="../../src/Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
+    <ProjectReference Include="../../src/Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
+    <ProjectReference Include="../../src/Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

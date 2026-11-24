@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BindSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Vibra.Shared.Domain/Vibra.Shared.Domain.csproj" />
+  </ItemGroup>
+</Project>

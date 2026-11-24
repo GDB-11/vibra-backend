@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <!-- Solo scripts/export-openapi.sh activa la generación del documento. -->
+    <OpenApiGenerateDocuments Condition="'$(OpenApiGenerateDocuments)' == ''">false</OpenApiGenerateDocuments>
+    <UserSecretsId>bcae1f51-909a-4b02-ba84-0ca52f8cac21</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Shared/Vibra.Shared.Api/Vibra.Shared.Api.csproj" />
+    <ProjectReference Include="../Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
+    <ProjectReference Include="../Modules/Catalog/Vibra.Modules.Catalog/Vibra.Modules.Catalog.csproj" />
+    <ProjectReference Include="../Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
+    <ProjectReference Include="../Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
+    <ProjectReference Include="../Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
+    <ProjectReference Include="../Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
+    <ProjectReference Include="../Modules/Billing/Vibra.Modules.Billing/Vibra.Modules.Billing.csproj" />
+  </ItemGroup>
+</Project>

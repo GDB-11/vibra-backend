@@ -1,0 +1,11 @@
+CLAUDE.md
+.claude/
+
+# .NET
+bin/
+obj/
+artifacts/
+*.user
+
+# Secretos locales
+.env

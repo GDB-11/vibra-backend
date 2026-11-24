@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Vibra.Api/Vibra.Api.csproj" />
+    <Project Path="src/Vibra.Worker/Vibra.Worker.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/Vibra.Shared.Api/Vibra.Shared.Api.csproj" />
+    <Project Path="src/Shared/Vibra.Shared.Domain/Vibra.Shared.Domain.csproj" />
+    <Project Path="src/Shared/Vibra.Shared.Infrastructure/Vibra.Shared.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/Billing/Vibra.Modules.Billing/Vibra.Modules.Billing.csproj" />
+    <Project Path="src/Modules/Catalog/Vibra.Modules.Catalog/Vibra.Modules.Catalog.csproj" />
+    <Project Path="src/Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
+    <Project Path="src/Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
+    <Project Path="src/Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
+    <Project Path="src/Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
+    <Project Path="src/Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Vibra.ArchitectureTests/Vibra.ArchitectureTests.csproj" />
+    <Project Path="tests/Vibra.Shared.Tests/Vibra.Shared.Tests.csproj" />
+  </Folder>
+</Solution>
