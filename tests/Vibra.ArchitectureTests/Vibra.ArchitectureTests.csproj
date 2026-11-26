@@ -22,7 +22,6 @@
     <ProjectReference Include="../../src/Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
     <ProjectReference Include="../../src/Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
     <ProjectReference Include="../../src/Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
-    <ProjectReference Include="../../src/Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
     <ProjectReference Include="../../src/Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
   </ItemGroup>
   <ItemGroup>

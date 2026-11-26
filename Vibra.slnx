@@ -14,7 +14,6 @@
     <Project Path="src/Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
     <Project Path="src/Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
     <Project Path="src/Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
-    <Project Path="src/Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
     <Project Path="src/Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
   </Folder>
   <Folder Name="/tests/">

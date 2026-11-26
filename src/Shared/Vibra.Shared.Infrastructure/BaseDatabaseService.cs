@@ -14,8 +14,6 @@ namespace Vibra.Shared.Infrastructure;
 /// </summary>
 public abstract class BaseDatabaseService(NpgsqlDataSource dataSource)
 {
-    static BaseDatabaseService() => DefaultTypeMap.MatchNamesWithUnderscores = true;
-
     /// <summary>
     /// Ejecuta la operación y convierte sus excepciones en el error indicado.
     /// La cancelación solicitada no es un error de datos: se propaga como excepción.

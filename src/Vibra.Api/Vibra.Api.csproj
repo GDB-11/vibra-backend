@@ -19,7 +19,6 @@
     <ProjectReference Include="../Modules/Library/Vibra.Modules.Library/Vibra.Modules.Library.csproj" />
     <ProjectReference Include="../Modules/Streaming/Vibra.Modules.Streaming/Vibra.Modules.Streaming.csproj" />
     <ProjectReference Include="../Modules/History/Vibra.Modules.History/Vibra.Modules.History.csproj" />
-    <ProjectReference Include="../Modules/Search/Vibra.Modules.Search/Vibra.Modules.Search.csproj" />
     <ProjectReference Include="../Modules/Billing/Vibra.Modules.Billing/Vibra.Modules.Billing.csproj" />
   </ItemGroup>
 </Project>

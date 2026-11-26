@@ -16,12 +16,12 @@ public sealed record ItemRejectedError() : ItemError("El elemento fue rechazado.
 
 public sealed record ItemDataError(Exception Exception) : ItemError("Fallo al acceder a los elementos.", Exception);
 
-public sealed record ItemRow(int Id, string DisplayName);
+public sealed record ItemRow(int ItemId, string DisplayName);
 
 /// <summary>Repositorio de ejemplo que usa la base como lo hará un módulo.</summary>
 public sealed class ProbeRepository(NpgsqlDataSource dataSource) : BaseDatabaseService(dataSource)
 {
-    private const string Insert = "INSERT INTO items (id, owner_id, display_name) VALUES (@Id, @OwnerId, @Name)";
+    private const string Insert = """INSERT INTO "Item" ("ItemId", "OwnerId", "DisplayName") VALUES (@Id, @OwnerId, @Name)""";
 
     public Task<Result<int, ItemError>> AddAsync(int id, int ownerId, CancellationToken cancellationToken) =>
         TryDbAsync(
@@ -32,19 +32,19 @@ public sealed class ProbeRepository(NpgsqlDataSource dataSource) : BaseDatabaseS
     public Task<Result<ItemRow?, ItemError>> FindAsync(int id, CancellationToken cancellationToken) =>
         TryDbAsync(
             () => QuerySingleOrDefaultAsync<ItemRow>(
-                "SELECT id, display_name FROM items WHERE id = @Id", new { Id = id }, cancellationToken),
+                """SELECT "ItemId", "DisplayName" FROM "Item" WHERE "ItemId" = @Id""", new { Id = id }, cancellationToken),
             Translate,
             cancellationToken);
 
     public Task<Result<IReadOnlyList<ItemRow>, ItemError>> ListAsync(CancellationToken cancellationToken) =>
         TryDbAsync(
-            () => QueryAsync<ItemRow>("SELECT id, display_name FROM items ORDER BY id", null, cancellationToken),
+            () => QueryAsync<ItemRow>("""SELECT "ItemId", "DisplayName" FROM "Item" ORDER BY "ItemId" """, null, cancellationToken),
             Translate,
             cancellationToken);
 
     public Task<Result<long, ItemError>> CountAsync(CancellationToken cancellationToken) =>
         TryDbAsync(
-            () => ExecuteScalarAsync<long>("SELECT count(*) FROM items", null, cancellationToken),
+            () => ExecuteScalarAsync<long>("""SELECT count(*) FROM "Item" """, null, cancellationToken),
             Translate,
             cancellationToken);
 

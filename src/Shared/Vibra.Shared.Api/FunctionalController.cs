@@ -30,7 +30,7 @@ public abstract class FunctionalController(ILogger<FunctionalController> logger)
     }
 
     /// <summary>
-    /// Como <see cref="ExecuteAsync{T,TError}"/>, pero entrega el id del usuario autenticado.
+    /// Como <see cref="ExecuteAsync{T,TError}"/>, pero entrega el código público (<c>UserCode</c>) del usuario autenticado.
     /// Responde 401 si no hay una identidad autenticada con un id válido.
     /// </summary>
     protected async Task<IActionResult> ExecuteAuthenticatedAsync<T, TError>(

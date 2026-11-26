@@ -14,7 +14,7 @@ public class DependencyTests
             .Order();
 
         Assert.Equal(Modules.Assemblies.Keys.Order(), folders);
-        Assert.Equal(7, Modules.Assemblies.Count);
+        Assert.Equal(6,Modules.Assemblies.Count);
     }
 
     [Theory]

@@ -5,7 +5,6 @@ using Vibra.Modules.Catalog.Api;
 using Vibra.Modules.History.Api;
 using Vibra.Modules.Identity.Api;
 using Vibra.Modules.Library.Api;
-using Vibra.Modules.Search.Api;
 using Vibra.Modules.Streaming.Api;
 using Vibra.Shared.Api;
 
@@ -14,9 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Se crea al primer uso: arrancar y exportar OpenAPI no requieren secretos.
+// La sesión de la base de datos va siempre en UTC (decisión 017).
 builder.Services.AddSingleton(services => NpgsqlDataSource.Create(
-    services.GetRequiredService<IConfiguration>().GetConnectionString("Postgres")
-    ?? throw new InvalidOperationException("Falta la configuración ConnectionStrings:Postgres.")));
+    new NpgsqlConnectionStringBuilder(
+        services.GetRequiredService<IConfiguration>().GetConnectionString("Postgres")
+        ?? throw new InvalidOperationException("Falta la configuración ConnectionStrings:Postgres."))
+    {
+        Timezone = "UTC",
+    }.ConnectionString));
 
 builder.Services.AddVibraControllers();
 
@@ -37,7 +41,6 @@ builder.Services
     .AddLibraryModule()
     .AddStreamingModule()
     .AddHistoryModule()
-    .AddSearchModule()
     .AddBillingModule();
 
 var app = builder.Build();

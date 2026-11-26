@@ -26,13 +26,13 @@ public sealed class PostgresFixture : IAsyncLifetime
     {
         await using var command = DataSource.CreateCommand(
             """
-            DROP TABLE IF EXISTS items, owners;
-            CREATE TABLE owners (id int PRIMARY KEY);
-            CREATE TABLE items (
-                id int CONSTRAINT items_pkey PRIMARY KEY,
-                owner_id int NOT NULL CONSTRAINT items_owner_fk REFERENCES owners (id),
-                display_name text NOT NULL);
-            INSERT INTO owners VALUES (1);
+            DROP TABLE IF EXISTS "Item", "Owner";
+            CREATE TABLE "Owner" ("OwnerId" int CONSTRAINT pk_owner PRIMARY KEY);
+            CREATE TABLE "Item" (
+                "ItemId" int CONSTRAINT pk_item PRIMARY KEY,
+                "OwnerId" int NOT NULL CONSTRAINT fk_item_owner_id REFERENCES "Owner" ("OwnerId"),
+                "DisplayName" text NOT NULL);
+            INSERT INTO "Owner" VALUES (1);
             """);
         await command.ExecuteNonQueryAsync();
     }

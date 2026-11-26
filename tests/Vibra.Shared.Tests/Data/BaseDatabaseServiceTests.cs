@@ -12,7 +12,7 @@ public sealed class BaseDatabaseServiceTests(PostgresFixture postgres)
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async Task Queries_map_snake_case_columns()
+    public async Task Queries_map_columns_by_name()
     {
         AssertSuccess(await _repository.AddAsync(1, 1, default));
 
@@ -29,7 +29,7 @@ public sealed class BaseDatabaseServiceTests(PostgresFixture postgres)
         var result = await _repository.AddAsync(1, 1, default);
 
         Assert.True(result.IsFailure, result.ToString());
-        Assert.Equal(new DuplicateItemError("items_pkey"), result.Error);
+        Assert.Equal(new DuplicateItemError("pk_item"), result.Error);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class BaseDatabaseServiceTests(PostgresFixture postgres)
         var result = await _repository.AddAsync(1, 404, default);
 
         Assert.True(result.IsFailure, result.ToString());
-        Assert.Equal(new MissingOwnerError("items_owner_fk"), result.Error);
+        Assert.Equal(new MissingOwnerError("fk_item_owner_id"), result.Error);
     }
 
     [Fact]
