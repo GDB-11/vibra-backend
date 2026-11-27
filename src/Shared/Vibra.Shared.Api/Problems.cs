@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Vibra.Shared.Domain;
 
 namespace Vibra.Shared.Api;
 
@@ -16,6 +17,17 @@ public static class Problems
             Title = title,
             Status = status,
             Detail = detail,
+        };
+
+    /// <summary>Error 400 con los mensajes agrupados por campo en <c>errors</c>.</summary>
+    public static ValidationProblemDetails Validation(IReadOnlyList<FieldError> errors) =>
+        new(errors.GroupBy(error => error.Field)
+            .ToDictionary(group => group.Key, group => group.Select(error => error.Message).ToArray()))
+        {
+            Type = TypePrefix + "validation",
+            Title = "Solicitud no válida",
+            Status = StatusCodes.Status400BadRequest,
+            Detail = "Revisa los campos indicados.",
         };
 
     /// <summary>Error genérico 500 para fallos de acceso a datos y errores no previstos.</summary>

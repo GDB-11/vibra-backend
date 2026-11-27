@@ -19,8 +19,13 @@ public sealed record ItemDataError(Exception Exception) : ItemError("Fallo al ac
 public sealed record ItemRow(int ItemId, string DisplayName);
 
 /// <summary>Repositorio de ejemplo que usa la base como lo hará un módulo.</summary>
-public sealed class ProbeRepository(NpgsqlDataSource dataSource) : BaseDatabaseService(dataSource)
+public sealed class ProbeRepository : BaseDatabaseService
 {
+    public ProbeRepository(NpgsqlDataSource dataSource)
+        : base(dataSource)
+    {
+    }
+
     private const string Insert = """INSERT INTO "Item" ("ItemId", "OwnerId", "DisplayName") VALUES (@Id, @OwnerId, @Name)""";
 
     public Task<Result<int, ItemError>> AddAsync(int id, int ownerId, CancellationToken cancellationToken) =>

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.OpenApi;
 using Npgsql;
+using Scalar.AspNetCore;
 using Vibra.Api;
 using Vibra.Modules.Billing.Api;
 using Vibra.Modules.Catalog.Api;
@@ -12,6 +13,9 @@ using Vibra.Shared.Api;
 using Vibra.Shared.Infrastructure.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// El generador de OpenAPI también ejecuta este código y no tiene base de datos ni secretos.
+var generatingOpenApi = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
 
 builder.Services.AddSingleton(TimeProvider.System);
 
@@ -39,7 +43,7 @@ builder.Services.AddOpenApi(options =>
 });
 
 builder.Services
-    .AddIdentityModule()
+    .AddIdentityModule(validateOnStart: !generatingOpenApi)
     .AddCatalogModule()
     .AddLibraryModule()
     .AddStreamingModule()
@@ -49,9 +53,6 @@ builder.Services
 var app = builder.Build();
 
 // En proceso y antes de atender solicitudes (decisión 002). Si falta la opción, no se migra.
-// El generador de OpenAPI también ejecuta este código y no tiene base de datos ni secretos.
-var generatingOpenApi = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
-
 if (!generatingOpenApi && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 {
     var migration = ModuleMigrator.Migrate(
@@ -62,6 +63,22 @@ if (!generatingOpenApi && app.Configuration.GetValue<bool>("Database:MigrateOnSt
 }
 
 app.UseVibraErrorHandling();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
+
+// Solo en desarrollo: documento OpenAPI y Scalar (/scalar) para probar la API.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(options => options
+        .WithTitle("Vibra API")
+        .WithTheme(ScalarTheme.DeepSpace)
+        .ForceDarkMode()
+        .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
+        .DisableAgent()
+        .DisableMcp()
+        .DisableTelemetry());
+}
 
 app.Run();

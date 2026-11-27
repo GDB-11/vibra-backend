@@ -81,6 +81,23 @@ public class NegativeControlTests
         Assert.Empty(SourceRules.MinimalApis("app.MapControllers(); result.Map(x => x);"));
 
     [Theory]
+    [InlineData("class A(int x);")]
+    [InlineData("public sealed class A(int x) : B(x) { }")]
+    [InlineData("struct A(int x);")]
+    [InlineData("readonly ref struct A(int x);")]
+    [InlineData("class A<T>(T x) where T : class;")]
+    [InlineData("class Outer { private sealed class Inner(int x); }")]
+    [InlineData("class A();")]
+    public void Primary_constructor_is_detected(string source) =>
+        Assert.Single(SourceRules.PrimaryConstructors(source));
+
+    [Fact]
+    public void Explicit_constructors_and_records_are_allowed() =>
+        Assert.Empty(SourceRules.PrimaryConstructors(
+            "class A : B { public A(int x) : base(x) { } } record C(int X); record class D(int X); "
+            + "readonly record struct E(int X);"));
+
+    [Theory]
     [InlineData("var a = DateTime.UtcNow;")]
     [InlineData("var a = DateTimeOffset.UtcNow;")]
     [InlineData("var a = System.DateTime.Now;")]

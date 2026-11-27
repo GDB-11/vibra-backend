@@ -13,9 +13,16 @@ namespace Vibra.ArchitectureTests.Fixtures.Modules.Beta.Application
 {
     using Alpha.Infrastructure;
 
-    public sealed class UsesInConstructor(AlphaRepository repository)
+    public sealed class UsesInConstructor
     {
-        public AlphaRepository Repository => repository;
+        private readonly AlphaRepository _repository;
+
+        public UsesInConstructor(AlphaRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public AlphaRepository Repository => _repository;
     }
 
     public sealed class UsesInMethodBody

@@ -2,12 +2,18 @@ using BindSharp;
 
 namespace Vibra.Shared.Tests.Data;
 
-public sealed class BaseDatabaseServiceTests(PostgresFixture postgres)
-    : IClassFixture<PostgresFixture>, IAsyncLifetime
+public sealed class BaseDatabaseServiceTests : IClassFixture<PostgresFixture>, IAsyncLifetime
 {
-    private readonly ProbeRepository _repository = new(postgres.DataSource);
+    private readonly PostgresFixture _postgres;
+    private readonly ProbeRepository _repository;
 
-    public Task InitializeAsync() => postgres.ResetAsync();
+    public BaseDatabaseServiceTests(PostgresFixture postgres)
+    {
+        _postgres = postgres;
+        _repository = new(postgres.DataSource);
+    }
+
+    public Task InitializeAsync() => _postgres.ResetAsync();
 
     public Task DisposeAsync() => Task.CompletedTask;
 

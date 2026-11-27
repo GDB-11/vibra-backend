@@ -7,12 +7,19 @@ using Vibra.Shared.Infrastructure.Migrations;
 
 namespace Vibra.Migrations.Tests;
 
-public sealed class ModuleMigratorTests(PostgresFixture postgres) : IClassFixture<PostgresFixture>
+public sealed class ModuleMigratorTests : IClassFixture<PostgresFixture>
 {
     private static readonly string[] ModuleNames =
         ["identity", "catalog", "streaming", "library", "history", "billing"];
 
     private static readonly ModuleMigrations Broken = new("broken", typeof(ModuleMigratorTests).Assembly);
+
+    private readonly PostgresFixture _postgres;
+
+    public ModuleMigratorTests(PostgresFixture postgres)
+    {
+        _postgres = postgres;
+    }
 
     private static int EmbeddedScripts(IEnumerable<ModuleMigrations> modules) =>
         modules.Sum(module => module.Assembly.GetManifestResourceNames()
@@ -135,7 +142,7 @@ public sealed class ModuleMigratorTests(PostgresFixture postgres) : IClassFixtur
         ModuleMigrator.Migrate(database, modules, NullLogger.Instance);
 
     private async Task<NpgsqlDataSource> CreateDataSourceAsync() =>
-        NpgsqlDataSource.Create(await postgres.CreateDatabaseAsync());
+        NpgsqlDataSource.Create(await _postgres.CreateDatabaseAsync());
 
     private static async Task<List<string>> QueryAsync(
         NpgsqlDataSource database, string sql, object? parameters = null)

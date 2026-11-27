@@ -18,10 +18,15 @@ public class ConventionTests
     [Fact]
     public void System_clock_is_not_used() => AssertSources(SourceRules.SystemClock);
 
-    private static void AssertSources(Func<string, IReadOnlyList<string>> rule)
-    {
-        var files = RepositoryPaths.SourceFiles();
+    [Fact]
+    public void Primary_constructors_are_not_used() =>
+        AssertFiles([.. RepositoryPaths.SourceFiles(), .. RepositoryPaths.TestFiles()], SourceRules.PrimaryConstructors);
 
+    private static void AssertSources(Func<string, IReadOnlyList<string>> rule) =>
+        AssertFiles(RepositoryPaths.SourceFiles(), rule);
+
+    private static void AssertFiles(IReadOnlyList<string> files, Func<string, IReadOnlyList<string>> rule)
+    {
         Assert.NotEmpty(files);
         Assert.Empty(files.SelectMany(file => rule(File.ReadAllText(file))
             .Select(violation => $"{Path.GetRelativePath(RepositoryPaths.Root, file)}: {violation}")));

@@ -27,6 +27,8 @@ dotnet run --project src/Vibra.Api     # http://localhost:5080
 ./scripts/export-openapi.sh            # genera artifacts/openapi/openapi.json (3.1.x)
 ```
 
+Para probar la API, abre <http://localhost:5080/scalar> (documento en `/openapi/v1.json`). Solo existe en el entorno `Development`.
+
 Testcontainers necesita el socket de Podman. Si no lo detecta:
 
 ```bash
@@ -56,9 +58,47 @@ El archivo de composición (PostgreSQL 18 + Valkey) vive en el repositorio `vibr
    dotnet user-secrets set "ConnectionStrings:Valkey" "localhost:6379,password=<VALKEY_PASSWORD>"
    ```
 
-4. Detener: `podman compose --env-file .env down` (añade `-v` para borrar los datos).
+4. Registrar la clave que firma los JWT (obligatoria: sin una de al menos 32 caracteres, la API no arranca). Genera una aleatoria:
+
+   ```bash
+   dotnet user-secrets set "Jwt:SigningKey" "$(openssl rand -base64 48)" --project src/Vibra.Api
+   ```
+
+   En despliegue, usa la variable de entorno `Jwt__SigningKey`. Cambiarla invalida los JWT emitidos; los tokens de renovación siguen sirviendo. `Jwt:Issuer` y `Jwt:Audience` están en `appsettings.json`. Ejecuta este comando desde la raíz del repositorio.
+
+5. Detener: `podman compose --env-file .env down` (añade `-v` para borrar los datos).
 
 Los secretos nunca se versionan; `appsettings*.json` no contiene credenciales.
+
+## Autenticación (decisión 007)
+
+| Endpoint | Éxito | Errores esperados |
+|---|---|---|
+| `POST /v1/auth/register` | 201 con tokens | 400, 409 (correo ya registrado) |
+| `POST /v1/auth/login` | 200 con tokens | 400, 401 |
+| `POST /v1/auth/refresh` | 200 con tokens nuevos | 400, 401 |
+
+Un 400 agrupa en `errors` todos los mensajes por campo (`body` si falla el cuerpo entero). Las reglas de fortaleza de la contraseña las aplica Identity y solo aparecen cuando el resto de los campos es válido.
+
+```json
+{
+  "type": "urn:vibra:problem:validation",
+  "title": "Solicitud no válida",
+  "status": 400,
+  "detail": "Revisa los campos indicados.",
+  "errors": {
+    "email": ["El correo no es válido."],
+    "displayName": ["El nombre es obligatorio."]
+  },
+  "traceId": "..."
+}
+```
+
+- La entrada es estricta: se rechazan los campos desconocidos o repetidos. El correo de una cuenta nueva necesita un dominio con punto.
+- El JWT dura 15 minutos y su `sub` es `UserCode`. Se protege un endpoint con `[Authorize]`.
+- Cada token de renovación sirve una vez y dura 30 días. Reutilizar uno revoca todos los de ese inicio de sesión. Solo se guarda su hash. El cliente no debe renovar en paralelo: si se pierde la respuesta, hay que iniciar sesión otra vez.
+- Contraseña y bloqueo con los valores predeterminados de Identity: 6 caracteres como mínimo (con mayúscula, minúscula, número y símbolo; máximo 128) y bloqueo de 5 minutos tras 5 fallos.
+- **Limitación:** no hay límite de solicitudes por cliente. Añádelo antes de exponer la API.
 
 ## Migraciones
 

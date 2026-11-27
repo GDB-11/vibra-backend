@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,26 @@ public static class ErrorHandlingExtensions
         services.AddProblemDetails(options => options.CustomizeProblemDetails =
             context => Translate(context.ProblemDetails));
 
-        return services
-            .AddControllers()
-            // Evita que los errores de deserialización revelen nombres de tipos de .NET.
-            .AddJsonOptions(options => options.AllowInputFormatterExceptionMessages = false);
+        var mvc = services
+            .AddControllers(options =>
+            {
+                // Los campos ausentes los rechazan los validadores, con mensajes en español.
+                options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+                options.Filters.Add<RequestValidationFilter>();
+            })
+            .AddJsonOptions(options =>
+            {
+                // Evita que los errores de deserialización revelen nombres de tipos de .NET.
+                options.AllowInputFormatterExceptionMessages = false;
+                // JSON estricto: ni campos desconocidos ni repetidos.
+                options.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
+                options.JsonSerializerOptions.AllowDuplicateProperties = false;
+            });
+
+        services.Configure<ApiBehaviorOptions>(options =>
+            options.InvalidModelStateResponseFactory = InvalidRequestResponse.Create);
+
+        return mvc;
     }
 
     // Solo afecta a los problemas que genera ASP.NET Core, no a los de los mapeadores.

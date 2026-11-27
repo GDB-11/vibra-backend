@@ -12,9 +12,16 @@ namespace Vibra.Shared.Api;
 /// a uno de estos métodos; aquí viven la conversión a HTTP, el registro de fallos y la lectura de claims.
 /// </summary>
 [ApiController]
-public abstract class FunctionalController(ILogger<FunctionalController> logger) : ControllerBase
+public abstract class FunctionalController : ControllerBase
 {
     private const string SubjectClaim = "sub";
+
+    private readonly ILogger<FunctionalController> _logger;
+
+    protected FunctionalController(ILogger<FunctionalController> logger)
+    {
+        _logger = logger;
+    }
 
     /// <summary>Ejecuta la operación y convierte su resultado en una respuesta HTTP.</summary>
     protected async Task<IActionResult> ExecuteAsync<T, TError>(
@@ -44,7 +51,7 @@ public abstract class FunctionalController(ILogger<FunctionalController> logger)
 
         if (User.Identity?.IsAuthenticated != true || !Guid.TryParse(subject, out var userId))
         {
-            logger.LogWarning("La operación {Operation} se rechazó: sin id de usuario válido", operationName);
+            _logger.LogWarning("La operación {Operation} se rechazó: sin id de usuario válido", operationName);
 
             return Problems.Unauthorized().ToActionResult(HttpContext);
         }
@@ -55,7 +62,7 @@ public abstract class FunctionalController(ILogger<FunctionalController> logger)
     // Solo se registran el nombre de la operación, el tipo de error y la excepción; nunca los datos.
     private void LogFailure<TError>(string operationName, TError error)
         where TError : IModuleError =>
-        logger.Log(
+        _logger.Log(
             error.Cause is null ? LogLevel.Warning : LogLevel.Error,
             error.Cause,
             "La operación {Operation} falló con {ErrorType}",
