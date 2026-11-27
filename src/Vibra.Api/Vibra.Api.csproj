@@ -2,7 +2,7 @@
   <PropertyGroup>
     <!-- Solo scripts/export-openapi.sh activa la generación del documento. -->
     <OpenApiGenerateDocuments Condition="'$(OpenApiGenerateDocuments)' == ''">false</OpenApiGenerateDocuments>
-    <UserSecretsId>bcae1f51-909a-4b02-ba84-0ca52f8cac21</UserSecretsId>
+    <UserSecretsId>vibra-api</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

@@ -20,6 +20,8 @@ public sealed class ProbeApiFactory : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
+        // Estas pruebas no usan base de datos.
+        builder.UseSetting("Database:MigrateOnStartup", "false");
         builder.ConfigureLogging(logging => logging.AddProvider(Logs));
         builder.ConfigureTestServices(services =>
         {

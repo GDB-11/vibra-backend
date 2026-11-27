@@ -18,6 +18,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Vibra.ArchitectureTests/Vibra.ArchitectureTests.csproj" />
+    <Project Path="tests/Vibra.Migrations.Tests/Vibra.Migrations.Tests.csproj" />
     <Project Path="tests/Vibra.Shared.Tests/Vibra.Shared.Tests.csproj" />
   </Folder>
 </Solution>

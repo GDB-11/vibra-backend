@@ -2,6 +2,10 @@
   <ItemGroup>
     <PackageReference Include="BindSharp" />
     <PackageReference Include="Dapper" />
+    <PackageReference Include="dbup-postgresql" />
     <PackageReference Include="Npgsql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Vibra.Shared.Domain/Vibra.Shared.Domain.csproj" />
   </ItemGroup>
 </Project>

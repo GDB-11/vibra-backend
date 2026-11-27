@@ -12,4 +12,8 @@
     <ProjectReference Include="../../../Shared/Vibra.Shared.Api/Vibra.Shared.Api.csproj" />
     <ProjectReference Include="../../../Shared/Vibra.Shared.Infrastructure/Vibra.Shared.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Copias de vibra-db (scripts/sync-db.sh). DbUp guarda este nombre en el diario: no lo cambies. -->
+    <EmbeddedResource Include="Infrastructure/Migrations/*.sql" LogicalName="streaming/%(Filename).sql" />
+  </ItemGroup>
 </Project>
