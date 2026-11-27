@@ -16,7 +16,7 @@ API ASP.NET Core 11 de Vibra.
 | `src/Vibra.Worker` | Ingesta y transcodificación (todavía sin trabajos) |
 | `src/Modules/<Módulo>/` | Un proyecto por módulo, con las carpetas `Domain`, `Application`, `Infrastructure` y `Api` |
 | `src/Shared/` | Contrato de errores, `FunctionalController` y `BaseDatabaseService` |
-| `tests/` | Pruebas de arquitectura, de la base compartida y de las migraciones |
+| `tests/` | Pruebas de arquitectura, de la base compartida, de las migraciones y de los módulos Identity y Catalog |
 
 ## Compilar y probar
 
@@ -99,6 +99,37 @@ Un 400 agrupa en `errors` todos los mensajes por campo (`body` si falla el cuerp
 - Cada token de renovación sirve una vez y dura 30 días. Reutilizar uno revoca todos los de ese inicio de sesión. Solo se guarda su hash. El cliente no debe renovar en paralelo: si se pierde la respuesta, hay que iniciar sesión otra vez.
 - Contraseña y bloqueo con los valores predeterminados de Identity: 6 caracteres como mínimo (con mayúscula, minúscula, número y símbolo; máximo 128) y bloqueo de 5 minutos tras 5 fallos.
 - **Limitación:** no hay límite de solicitudes por cliente. Añádelo antes de exponer la API.
+
+## Catálogo
+
+Todas las lecturas requieren sesión. Solo muestran las pistas `Ready`; un álbum necesita al menos una, y un artista, un álbum visible o un crédito en una pista `Ready`. Lo oculto responde 404.
+
+| Endpoint | `operationId` | Orden |
+|---|---|---|
+| `GET /v1/artists` | `listArtists` | Nombre |
+| `GET /v1/artists/{id}` | `getArtist` | |
+| `GET /v1/artists/{id}/albums` | `listArtistAlbums` (artista principal) | Fecha de salida |
+| `GET /v1/albums` | `listAlbums` | Título |
+| `GET /v1/albums/{id}` | `getAlbum` | |
+| `GET /v1/albums/{id}/tracks` | `listAlbumTracks` | Disco y número |
+| `GET /v1/tracks` | `listTracks` | Título |
+| `GET /v1/tracks/{id}` | `getTrack` | |
+
+- **Paginación:** `limit` (1 a 50; 20 por defecto) y `cursor`. La respuesta es `{ "items": [...], "nextCursor": "..." }`; `nextCursor` es `null` en la última página. El cursor es opaco y solo sirve para la lista que lo devolvió.
+- **Consulta estricta:** un valor no válido o un parámetro desconocido o repetido responde 400. Las rutas de detalle no admiten parámetros.
+- **ETag:** cada respuesta 200 lleva uno. Con `If-None-Match` coincidente, la API responde 304. Ahorra transferencia, no consultas a la base.
+- **Precios:** `priceCents`, `currency` y `storeProductId` (puede ser `null`).
+
+### Portadas
+
+`cover` es una lista de `{ width, url }` con la forma `{Images:BaseUrl}/covers/{CoverKey}/{width}.jpg`. Es `null` si el álbum no tiene portada o no está configurado `Images:BaseUrl`.
+
+| Opción | Valor |
+|---|---|
+| `Images:BaseUrl` | URL https pública de la CDN de `vibra-images`. Sin valor por defecto |
+| `Images:CoverWidths` | `300`, `600` y `800` por defecto |
+
+**Limitación:** los anchos no se guardan por álbum, así que todas las portadas deben existir en los anchos configurados. La ingesta (Sprint 3) tendrá que resolver otros tamaños de origen.
 
 ## Migraciones
 

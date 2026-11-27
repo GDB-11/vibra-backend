@@ -32,7 +32,14 @@ public static class ErrorHandlingExtensions
                 // JSON estricto: ni campos desconocidos ni repetidos.
                 options.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
                 options.JsonSerializerOptions.AllowDuplicateProperties = false;
+                // Los números no se aceptan como texto.
+                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.Strict;
             });
+
+        // El documento OpenAPI se genera con estas otras opciones. Sin esto, cada entero se
+        // describe como "integer o string" y el cliente Swift pierde el tipo.
+        services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);
 
         services.Configure<ApiBehaviorOptions>(options =>
             options.InvalidModelStateResponseFactory = InvalidRequestResponse.Create);

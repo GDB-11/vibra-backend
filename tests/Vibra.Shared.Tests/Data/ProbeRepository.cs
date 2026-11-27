@@ -6,7 +6,7 @@ using Vibra.Shared.Infrastructure;
 
 namespace Vibra.Shared.Tests.Data;
 
-public abstract record ItemError(string Message, Exception? Cause = null) : IModuleError;
+public closed record ItemError(string Message, Exception? Cause = null) : IModuleError;
 
 public sealed record DuplicateItemError(string Constraint) : ItemError("El elemento ya existe.");
 

@@ -3,7 +3,7 @@ using Vibra.Shared.Domain;
 namespace Vibra.Shared.Infrastructure.Migrations;
 
 /// <summary>Errores al migrar la base de datos.</summary>
-public abstract record MigrationError(string Module, string Message, Exception? Cause) : IModuleError;
+public closed record MigrationError(string Module, string Message, Exception? Cause) : IModuleError;
 
 /// <summary>El módulo no tiene scripts incrustados: la sincronización o el nombre del recurso fallan.</summary>
 public sealed record MissingMigrationsError(string Module)

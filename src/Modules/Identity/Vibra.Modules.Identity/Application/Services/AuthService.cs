@@ -100,9 +100,8 @@ internal sealed class AuthService : IAuthService
                     return new PasswordCheck(user, matches);
                 },
                 cancellationToken)
-            .BindAsync(check => check is null
-                ? Task.FromResult(InvalidCredentials())
-                : RecordAttemptAsync(check, cancellationToken));
+            .EnsureNotNullAsync(new IdentityModuleError.InvalidCredentials())
+            .BindAsync(check => RecordAttemptAsync(check, cancellationToken));
 
     private Task<Result<User, IdentityModuleError>> RecordAttemptAsync(
         PasswordCheck check, CancellationToken cancellationToken)

@@ -4,9 +4,9 @@ namespace Vibra.Modules.Identity.Application.Errors;
 
 /// <summary>
 /// Errores del módulo Identity. No se llama <c>IdentityError</c> para no chocar con el tipo
-/// de ASP.NET Core Identity.
+/// de ASP.NET Core Identity. La jerarquía es cerrada: un caso nuevo sin tratar en el mapeador no compila.
 /// </summary>
-public abstract record IdentityModuleError : IModuleError
+public closed record IdentityModuleError : IModuleError
 {
     private IdentityModuleError(string message, Exception? cause = null)
     {

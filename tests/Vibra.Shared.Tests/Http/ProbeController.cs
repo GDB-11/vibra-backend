@@ -6,7 +6,7 @@ using Vibra.Shared.Domain;
 
 namespace Vibra.Shared.Tests.Http;
 
-public abstract record ProbeError(string Message, Exception? Cause = null) : IModuleError;
+public closed record ProbeError(string Message, Exception? Cause = null) : IModuleError;
 
 public sealed record ProbeNotFoundError() : ProbeError("El recurso no existe.");
 
@@ -18,7 +18,7 @@ public sealed class ProbeErrorMapper : IErrorHttpMapper<ProbeError>
         error switch
         {
             ProbeNotFoundError => Problems.Create(404, "probe-not-found", "No encontrado", error.Message),
-            _ => Problems.Unexpected(),
+            ProbeDataError => Problems.Unexpected(),
         };
 }
 

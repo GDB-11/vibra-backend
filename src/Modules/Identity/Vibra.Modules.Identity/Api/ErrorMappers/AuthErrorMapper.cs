@@ -17,6 +17,6 @@ internal sealed class AuthErrorMapper : IAuthErrorMapper
                 StatusCodes.Status401Unauthorized, "invalid-credentials", "Credenciales no válidas", error.Message),
             IdentityModuleError.InvalidRefreshToken => Problems.Create(
                 StatusCodes.Status401Unauthorized, "invalid-refresh-token", "Sesión no válida", error.Message),
-            _ => Problems.Unexpected(),
+            IdentityModuleError.DataAccess => Problems.Unexpected(),
         };
 }

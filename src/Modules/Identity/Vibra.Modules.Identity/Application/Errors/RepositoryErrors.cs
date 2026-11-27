@@ -1,7 +1,7 @@
 namespace Vibra.Modules.Identity.Application.Errors;
 
 /// <summary>Errores de los repositorios; cada operación tiene el suyo.</summary>
-internal abstract record RepositoryError(Exception? Cause);
+internal closed record RepositoryError(Exception? Cause);
 
 internal sealed record CreateUserFailed(Exception Exception) : RepositoryError(Exception);
 

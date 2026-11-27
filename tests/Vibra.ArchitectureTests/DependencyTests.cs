@@ -35,7 +35,7 @@ public class DependencyTests
         var prefixes = Modules.Layers.Select(layer => $"{Modules.RootNamespace}.{module}.{layer}").ToList();
 
         var strays = Modules.Assemblies[module].GetTypes()
-            .Where(type => type.Namespace?.StartsWith("Vibra", StringComparison.Ordinal) ?? !type.Name.StartsWith('<'))
+            .Where(type => type.Namespace?.StartsWith("Vibra", StringComparison.Ordinal) ?? !type.FullName!.StartsWith('<'))
             .Where(type => !prefixes.Any(prefix =>
                 type.Namespace == prefix || (type.Namespace?.StartsWith(prefix + ".", StringComparison.Ordinal) ?? false)))
             .Select(type => type.FullName);
