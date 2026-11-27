@@ -1,5 +1,7 @@
+using System.Reflection;
 using Microsoft.OpenApi;
 using Npgsql;
+using Vibra.Api;
 using Vibra.Modules.Billing.Api;
 using Vibra.Modules.Catalog.Api;
 using Vibra.Modules.History.Api;
@@ -7,6 +9,7 @@ using Vibra.Modules.Identity.Api;
 using Vibra.Modules.Library.Api;
 using Vibra.Modules.Streaming.Api;
 using Vibra.Shared.Api;
+using Vibra.Shared.Infrastructure.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +47,19 @@ builder.Services
     .AddBillingModule();
 
 var app = builder.Build();
+
+// En proceso y antes de atender solicitudes (decisión 002). Si falta la opción, no se migra.
+// El generador de OpenAPI también ejecuta este código y no tiene base de datos ni secretos.
+var generatingOpenApi = Assembly.GetEntryAssembly()?.GetName().Name == "GetDocument.Insider";
+
+if (!generatingOpenApi && app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    var migration = ModuleMigrator.Migrate(
+        app.Services.GetRequiredService<NpgsqlDataSource>(), VibraMigrations.All, app.Logger);
+
+    if (migration.IsFailure)
+        throw new InvalidOperationException(migration.Error.Message, migration.Error.Cause);
+}
 
 app.UseVibraErrorHandling();
 app.MapControllers();

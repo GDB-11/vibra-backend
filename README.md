@@ -16,7 +16,7 @@ API ASP.NET Core 11 de Vibra.
 | `src/Vibra.Worker` | Ingesta y transcodificación (todavía sin trabajos) |
 | `src/Modules/<Módulo>/` | Un proyecto por módulo, con las carpetas `Domain`, `Application`, `Infrastructure` y `Api` |
 | `src/Shared/` | Contrato de errores, `FunctionalController` y `BaseDatabaseService` |
-| `tests/` | Pruebas de arquitectura y de la base compartida |
+| `tests/` | Pruebas de arquitectura, de la base compartida y de las migraciones |
 
 ## Compilar y probar
 
@@ -52,10 +52,23 @@ El archivo de composición (PostgreSQL 18 + Valkey) vive en el repositorio `vibr
 3. Registrar las cadenas de conexión como secretos de usuario (desde `src/Vibra.Api`; el proyecto ya tiene `UserSecretsId`):
 
    ```bash
-   dotnet user-secrets set "ConnectionStrings:Postgres" "Host=localhost;Port=5432;Database=vibra;Username=vibra;Password=<POSTGRES_PASSWORD>"
+   dotnet user-secrets set "ConnectionStrings:Postgres" "Host=localhost;Port=5432;Database=VibraDB;Username=vibra;Password=<POSTGRES_PASSWORD>"
    dotnet user-secrets set "ConnectionStrings:Valkey" "localhost:6379,password=<VALKEY_PASSWORD>"
    ```
 
 4. Detener: `podman compose --env-file .env down` (añade `-v` para borrar los datos).
 
 Los secretos nunca se versionan; `appsettings*.json` no contiene credenciales.
+
+## Migraciones
+
+La API aplica las migraciones con DbUp al arrancar, en este orden: Identity, Catalog, Streaming, Library, History y Billing. Cada módulo tiene su diario (`public.<módulo>_schemaversions`). Si una falla, la API no arranca.
+
+- Se controla con `Database:MigrateOnStartup` (`true` en `appsettings.json`; si falta, no se migra). DbUp no bloquea entre procesos: solo una instancia debe migrar a la vez.
+- El SQL se escribe en `vibra-db`. Para copiarlo aquí:
+
+  ```bash
+  ./scripts/sync-db.sh     # VIBRA_DB_DIR cambia el origen (por defecto, ../vibra-db)
+  ```
+
+- No edites las copias. Un script ya aplicado no vuelve a ejecutarse: para cambiar el esquema, añade `NNNN_nombre.sql` con el número siguiente.

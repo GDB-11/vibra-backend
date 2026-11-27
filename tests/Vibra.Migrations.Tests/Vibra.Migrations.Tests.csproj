@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Vibra.Api/Vibra.Api.csproj" />
+    <ProjectReference Include="../../src/Shared/Vibra.Shared.Infrastructure/Vibra.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Un módulo falso: su segundo script falla a medias. -->
+    <EmbeddedResource Include="Fixtures/broken/*.sql" LogicalName="broken/%(Filename).sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>
