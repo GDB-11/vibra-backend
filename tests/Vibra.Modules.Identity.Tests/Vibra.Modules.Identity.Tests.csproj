@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Vibra.Api/Vibra.Api.csproj" />
+    <ProjectReference Include="../../src/Modules/Identity/Vibra.Modules.Identity/Vibra.Modules.Identity.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- La misma espera de PostgreSQL que en las pruebas de migraciones. -->
+    <Compile Include="../Vibra.Migrations.Tests/PostgresFixture.cs" Link="PostgresFixture.cs" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

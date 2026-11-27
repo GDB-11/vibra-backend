@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageReference Include="BindSharp" />
     <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Npgsql" />
   </ItemGroup>
   <ItemGroup>

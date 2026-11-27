@@ -6,9 +6,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Vibra.Shared.Tests.Http;
 
-public sealed class FunctionalControllerTests(ProbeApiFactory factory) : IClassFixture<ProbeApiFactory>
+public sealed class FunctionalControllerTests : IClassFixture<ProbeApiFactory>
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private readonly ProbeApiFactory _factory;
+    private readonly HttpClient _client;
+
+    public FunctionalControllerTests(ProbeApiFactory factory)
+    {
+        _factory = factory;
+        _client = factory.CreateClient();
+    }
 
     [Fact]
     public async Task Success_returns_200_with_the_value()
@@ -45,7 +52,7 @@ public sealed class FunctionalControllerTests(ProbeApiFactory factory) : IClassF
             await _client.GetAsync("/v1/test-probe/data-error"), HttpStatusCode.InternalServerError);
 
         Assert.Equal("urn:vibra:problem:unexpected", problem.GetProperty("type").GetString());
-        Assert.Contains(factory.Logs.Entries, entry =>
+        Assert.Contains(_factory.Logs.Entries, entry =>
             entry.Level == LogLevel.Error
             && entry.Message.Contains(nameof(ProbeDataError), StringComparison.Ordinal)
             && entry.Exception?.Message == ProbeController.Secret);

@@ -12,8 +12,15 @@ namespace Vibra.Shared.Infrastructure;
 /// <see cref="TryDbAsync{T,TError}"/> o <see cref="TryTransactionAsync{T,TError}"/>
 /// con un error propio de la operación.
 /// </summary>
-public abstract class BaseDatabaseService(NpgsqlDataSource dataSource)
+public abstract class BaseDatabaseService
 {
+    private readonly NpgsqlDataSource _dataSource;
+
+    protected BaseDatabaseService(NpgsqlDataSource dataSource)
+    {
+        _dataSource = dataSource;
+    }
+
     /// <summary>
     /// Ejecuta la operación y convierte sus excepciones en el error indicado.
     /// La cancelación solicitada no es un error de datos: se propaga como excepción.
@@ -44,7 +51,7 @@ public abstract class BaseDatabaseService(NpgsqlDataSource dataSource)
         TryDbAsync(
                 async () =>
                 {
-                    await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+                    await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
                     await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
                     var result = await operation(connection, transaction);
@@ -122,7 +129,7 @@ public abstract class BaseDatabaseService(NpgsqlDataSource dataSource)
     private async Task<T> WithConnectionAsync<T>(
         Func<NpgsqlConnection, Task<T>> operation, CancellationToken cancellationToken)
     {
-        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
         return await operation(connection);
     }

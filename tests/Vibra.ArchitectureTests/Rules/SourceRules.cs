@@ -32,6 +32,15 @@ internal static class SourceRules
             .Select(invocation => invocation.ToString()),
     ];
 
+    /// <summary>Clases y structs con constructor primario. Los records no cuentan: declaran propiedades.</summary>
+    public static IReadOnlyList<string> PrimaryConstructors(string source) =>
+    [
+        .. Parse(source).DescendantNodes()
+            .OfType<TypeDeclarationSyntax>()
+            .Where(type => type is ClassDeclarationSyntax or StructDeclarationSyntax && type.ParameterList is not null)
+            .Select(type => type.Identifier.Text),
+    ];
+
     public static IReadOnlyList<string> SystemClock(string source) =>
     [
         .. Parse(source).DescendantNodes()

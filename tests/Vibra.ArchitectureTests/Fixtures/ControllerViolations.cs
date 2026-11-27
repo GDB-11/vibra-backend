@@ -8,12 +8,31 @@ namespace Vibra.ArchitectureTests.Fixtures.Controllers;
 public sealed class PlainController : ControllerBase;
 
 [ApiController]
-public sealed class RepeatedAttributeController(ILogger<FunctionalController> logger) : FunctionalController(logger);
-
-public sealed class DataAccessController(ILogger<FunctionalController> logger, NpgsqlDataSource dataSource)
-    : FunctionalController(logger)
+public sealed class RepeatedAttributeController : FunctionalController
 {
-    public NpgsqlDataSource DataSource => dataSource;
+    public RepeatedAttributeController(ILogger<FunctionalController> logger)
+        : base(logger)
+    {
+    }
 }
 
-public sealed class ValidController(ILogger<FunctionalController> logger) : FunctionalController(logger);
+public sealed class DataAccessController : FunctionalController
+{
+    private readonly NpgsqlDataSource _dataSource;
+
+    public DataAccessController(ILogger<FunctionalController> logger, NpgsqlDataSource dataSource)
+        : base(logger)
+    {
+        _dataSource = dataSource;
+    }
+
+    public NpgsqlDataSource DataSource => _dataSource;
+}
+
+public sealed class ValidController : FunctionalController
+{
+    public ValidController(ILogger<FunctionalController> logger)
+        : base(logger)
+    {
+    }
+}

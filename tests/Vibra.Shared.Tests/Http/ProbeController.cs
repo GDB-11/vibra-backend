@@ -24,13 +24,23 @@ public sealed class ProbeErrorMapper : IErrorHttpMapper<ProbeError>
 
 public sealed record ProbeBody(Guid Id);
 
+public sealed class ProbeBodyValidator : IRequestValidator<ProbeBody>
+{
+    public IReadOnlyList<FieldError> Validate(ProbeBody request) => [];
+}
+
 /// <summary>Controlador solo de pruebas para ejercitar la base a través del host real.</summary>
 [Route("v1/test-probe")]
-public sealed class ProbeController(ILogger<FunctionalController> logger) : FunctionalController(logger)
+public sealed class ProbeController : FunctionalController
 {
     public const string Secret = "SECRET-SELECT * FROM users";
 
     private static readonly ProbeErrorMapper Mapper = new();
+
+    public ProbeController(ILogger<FunctionalController> logger)
+        : base(logger)
+    {
+    }
 
     [HttpGet("ok")]
     public Task<IActionResult> Succeed() =>

@@ -15,9 +15,14 @@ internal static class RepositoryPaths
     }
 
     /// <summary>Código fuente de <c>src/</c>, sin las carpetas de compilación.</summary>
-    public static IReadOnlyList<string> SourceFiles() =>
+    public static IReadOnlyList<string> SourceFiles() => CodeFiles("src");
+
+    /// <summary>Código fuente de <c>tests/</c>, sin las carpetas de compilación.</summary>
+    public static IReadOnlyList<string> TestFiles() => CodeFiles("tests");
+
+    private static IReadOnlyList<string> CodeFiles(string folder) =>
     [
-        .. Directory.EnumerateFiles(Path.Combine(Root, "src"), "*.cs", SearchOption.AllDirectories)
+        .. Directory.EnumerateFiles(Path.Combine(Root, folder), "*.cs", SearchOption.AllDirectories)
             .Where(path => !Path.GetRelativePath(Root, path)
                 .Split(Path.DirectorySeparatorChar)
                 .Any(part => part is "bin" or "obj")),

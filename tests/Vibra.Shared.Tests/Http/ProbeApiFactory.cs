@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Vibra.Shared.Api;
 
 namespace Vibra.Shared.Tests.Http;
 
@@ -22,11 +23,13 @@ public sealed class ProbeApiFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Development");
         // Estas pruebas no usan base de datos.
         builder.UseSetting("Database:MigrateOnStartup", "false");
+        builder.UseSetting("Jwt:SigningKey", "clave-solo-para-pruebas-0123456789abcdef");
         builder.ConfigureLogging(logging => logging.AddProvider(Logs));
         builder.ConfigureTestServices(services =>
         {
             services.AddControllers().AddApplicationPart(typeof(ProbeController).Assembly);
             services.AddSingleton<IStartupFilter, TestIdentityFilter>();
+            services.AddSingleton<IRequestValidator<ProbeBody>, ProbeBodyValidator>();
         });
     }
 
@@ -63,8 +66,15 @@ public sealed class CapturingLoggerProvider : ILoggerProvider
     {
     }
 
-    private sealed class CapturingLogger(ConcurrentQueue<LogEntry> entries) : ILogger
+    private sealed class CapturingLogger : ILogger
     {
+        private readonly ConcurrentQueue<LogEntry> _entries;
+
+        public CapturingLogger(ConcurrentQueue<LogEntry> entries)
+        {
+            _entries = entries;
+        }
+
         public IDisposable? BeginScope<TState>(TState state)
             where TState : notnull => null;
 
@@ -72,6 +82,6 @@ public sealed class CapturingLoggerProvider : ILoggerProvider
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
             Func<TState, Exception?, string> formatter) =>
-            entries.Enqueue(new LogEntry(logLevel, formatter(state, exception), exception));
+            _entries.Enqueue(new LogEntry(logLevel, formatter(state, exception), exception));
     }
 }
